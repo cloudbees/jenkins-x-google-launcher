@@ -1,0 +1,13 @@
+
+
+## Building the Deployer Image
+Build from the [Dockerfile](https://github.com/cloudbees/jenkins-x-google-launcher/blob/master/Dockerfile).
+
+```shell
+docker build -t deployer:latest .
+
+docker tag deployer:latest gcr.io/<path>/deployer:<tag>
+
+docker push gcr.io/<path>/deployer:<tag>
+```
+
