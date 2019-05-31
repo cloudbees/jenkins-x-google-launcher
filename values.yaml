@@ -1,9 +1,0 @@
-name: jenkins-x
-namespace: test-ns
-cluster: warren-mp-5
-
-gitName: JenkinsXBot
-gitEmail: jenkins-x@googlegroups.com
-gitUsername: jenkins-x-bot-test
-deployer-sa: deployer-sa
-

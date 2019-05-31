@@ -37,7 +37,8 @@ RUN mv jx /usr/local/bin
 COPY deployer/deploy.sh /bin/
 #COPY deployer/deploy_with_tests.sh /bin/
 COPY schema.yaml /data/
-COPY values.yaml /data/
+COPY deployer/get_config.py /bin/
+RUN chmod a+x /bin/get_config.py
 #COPY server.config /data/
 #COPY manifest /data/manifest
 #COPY manifest-ingress /data/manifest-ingress

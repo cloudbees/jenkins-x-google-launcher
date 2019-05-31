@@ -1,22 +1,41 @@
 #!/bin/bash
 
-
 set -eox pipefail
-
 
 /bin/print_config.py --values_mode raw --key KEY
 
 
-#TODO - extract parameters
-#CLUSTER="$(/bin/print_config.py --values_mode raw"
-
 NAME="$(/bin/print_config.py \
     --xtype NAME \
     --values_mode raw)"
+
 NAMESPACE="$(/bin/print_config.py \
     --xtype NAMESPACE \
     --values_mode raw)"
 
+ADMIN_PASSWORD="$(/bin/get_config.py \
+    --key admin-password \
+    --values_mode raw)"
+
+CLUSTER="$(/bin/get_config.py \
+    --key cluster \
+    --values_mode raw)"
+
+GIT_USERNAME="$(/bin/get_config.py \
+    --key git-username \
+    --values_mode raw)"
+
+GIT_EMAIL="$(/bin/get_config.py \
+    --key git-email \
+    --values_mode raw)"
+
+GIT_API_TOKEN="$(/bin/get_config.py \
+    --key git-api-token \
+    --values_mode raw)"
+
+GIT_ENVIRONMENT_OWNER="$(/bin/get_config.py \
+    --key git-environment-owner \
+    --values_mode raw)"
 
 export NAME
 export NAMESPACE
@@ -31,25 +50,48 @@ app_api_version=$(kubectl get "applications.app.k8s.io/$NAME" \
 
 # TODO remove hard coded param
 # setup the kubectl context
-kubectl config set-context warren-mp5 --user=cluster-admin --namespace=$NAMESPACE \
-  && kubectl config use-context warren-mp5
+kubectl config set-context $CLUSTER --user=cluster-admin --namespace=$NAMESPACE \
+  && kubectl config use-context $CLUSTER
 
 # setup git
-git config --global --add user.name JenkinsXBot
-git config --global --add user.email jenkins-x@googlegroups.com
+git config --global --add user.name $GIT_USERNAME
+git config --global --add user.email $GIT_EMAIL
 
 # Install Jenkins X into the current cluster
 jx install \
 -b \
---default-admin-password=admin \
+--default-admin-password=$ADMIN_PASSWORD \
 --tekton \
---git-username jenkins-x-bot-test \
---git-api-token <replace-with-api-token>  \
---environment-git-owner cb-kubecd \
+--git-username $$GIT_USERNAME \
+--git-api-token $GIT_API_TOKEN \
+--environment-git-owner $GIT_ENVIRONMENT_OWNER  \
 --provider=gke
 
 echo "CloudBees Jenkins X is installed and running"
 
-
-#jx create cluster gke -b -m n1-standard-2 --min-num-nodes=3 --max-num-nodes=5 -z europe-west1-c --skip-login  --default-admin-password=admin --project-id jx-development --tekton --git-username jenkins-x-bot-test --git-api-token <replace-token>  --environment-git-owner cb-kubecd -n marketplace-test
 #
+#/bin/expand_config.py --values_mode raw --app_uid "$app_uid"
+#
+#create_manifests.sh
+#
+## Assign owner references for the resources.
+#/bin/set_ownership.py \
+#  --app_name "$NAME" \
+#  --app_uid "$app_uid" \
+#  --app_api_version "$app_api_version" \
+#  --manifests "/data/manifest-expanded" \
+#  --dest "/data/resources.yaml"
+#
+## Ensure assembly phase is "Pending", until successful kubectl apply.
+#/bin/setassemblyphase.py \
+#  --manifest "/data/resources.yaml" \
+#  --status "Pending"
+#
+## Apply the manifest.
+#kubectl apply --namespace="$NAMESPACE" --filename="/data/resources.yaml"
+
+patch_assembly_phase.sh --status="Success"
+
+clean_iam_resources.sh
+
+trap - EXIT
