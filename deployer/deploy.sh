@@ -62,10 +62,11 @@ jx install \
 -b \
 --default-admin-password=$ADMIN_PASSWORD \
 --tekton \
---git-username $$GIT_USERNAME \
+--git-username $GIT_USERNAME \
 --git-api-token $GIT_API_TOKEN \
 --environment-git-owner $GIT_ENVIRONMENT_OWNER  \
---provider=gke
+--provider=gke \
+--docker-registry=gcr.io
 
 echo "CloudBees Jenkins X is installed and running"
 

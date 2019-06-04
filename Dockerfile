@@ -28,7 +28,7 @@ RUN mv linux-amd64/helm /usr/local/bin/helm
 
 # Download Jenkins X
 RUN mkdir -p ~/.jx/bin
-RUN curl -L https://github.com/jenkins-x/jx/releases/download/v2.0.122/jx-linux-amd64.tar.gz | tar xzv
+RUN curl -L https://github.com/jenkins-x/jx/releases/download/v2.0.215/jx-linux-amd64.tar.gz | tar xzv
 RUN mv jx /usr/local/bin
 
 
