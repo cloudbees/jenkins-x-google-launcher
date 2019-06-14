@@ -1,0 +1,51 @@
+applicationApiVersion: v1beta1
+properties:
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME
+  namespace:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+  deployer-sa:
+    title: Service account name
+    type: string
+    description: This is the name of the ServiceAccount that is used to deploy CloudBees Jenkins X
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        roles:
+          - type: ClusterRole
+            rulesType: PREDEFINED
+            rulesFromRoleName: cluster-admin
+  admin-password:
+    type: string
+    x-google-market-place:
+      type: GENERATED_PASSWORD
+  cluster:
+    type: string
+    x-google-market-place:
+      type: STRING
+  git-username:
+    type: string
+    x-google-market-place:
+      type: STRING
+  git-email:
+    type: string
+    x-google-market-place:
+      type: STRING
+  git-api-token:
+    type: string
+    x-google-market-place:
+      type: STRING
+  git-environment-owner:
+    type: string
+    x-google-market-place:
+      type: STRING
+required:
+  - name
+  - namespace
+  - deployer-sa
+  - admin-password
+  - cluster
