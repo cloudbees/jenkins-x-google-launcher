@@ -3,11 +3,39 @@
 ## Building the Deployer Image
 Build from the [Dockerfile](https://github.com/cloudbees/jenkins-x-google-launcher/blob/master/Dockerfile).
 
+
+
 ```shell
 docker build -t deployer:latest .
 
 docker tag deployer:latest gcr.io/<path>/deployer:<tag>
 
 docker push gcr.io/<path>/deployer:<tag>
+
 ```
 
+To Run
+
+```
+
+export APP_NAME=jenkins-x
+
+export REGISTRY=gcr.io/$(gcloud config get-value project | tr ':' '/')
+
+kubectl create namespace installer
+
+kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
+
+mpdev /scripts/install \
+  --deployer=$REGISTRY/warrenbailey/$APP_NAME/deployer:0.0.114 \
+  --parameters='{"name": "jenkins-x", "namespace": "installer", "admin-password" : "foo", "cluster":"jenkins-x-marketplace", "git-username":"..", "git-email":"...", "git-environment-owner":"..", "git-api-token":"...", "cloudbees-auth-username":"admin", "cloudbees-auth-password":"..."}'
+
+
+
+```
+
+Delete application and re-run:
+
+```
+kc delete application jenkins-x
+```

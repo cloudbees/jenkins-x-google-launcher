@@ -43,6 +43,20 @@ properties:
     type: string
     x-google-market-place:
       type: STRING
+  cloudbees-domain:
+    type: string
+    default: https://jx-tenant-service-pr-7.infra.jrawlings.co.uk
+    x-google-market-place:
+      type: STRING
+  cloudbees-auth-username:
+    type: string
+    default: admin
+    x-google-market-place:
+      type: STRING
+  cloudbees-auth-password:
+    type: string
+    x-google-market-place:
+      type: STRING
 required:
   - name
   - namespace

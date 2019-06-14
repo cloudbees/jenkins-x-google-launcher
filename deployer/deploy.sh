@@ -4,7 +4,6 @@ set -eox pipefail
 
 /bin/print_config.py --values_mode raw --key KEY
 
-
 NAME="$(/bin/print_config.py \
     --xtype NAME \
     --values_mode raw)"
@@ -37,8 +36,22 @@ GIT_ENVIRONMENT_OWNER="$(/bin/get_config.py \
     --key git-environment-owner \
     --values_mode raw)"
 
+CLOUDBEES_DOMAIN="$(/bin/get_config.py \
+    --key cloudbees-domain \
+    --values_mode raw)"
+
+CLOUDBEES_AUTH_USERNAME="$(/bin/get_config.py \
+    --key cloudbees-auth-username \
+    --values_mode raw)"
+
+CLOUDBEES_AUTH_PASSWORD="$(/bin/get_config.py \
+    --key cloudbees-auth-password \
+    --values_mode raw)"
+
 export NAME
 export NAMESPACE
+
+export JX_DISABLE_DELETE_HELM_HOOKS=true
 
 app_uid=$(kubectl get "applications.app.k8s.io/$NAME" \
   --namespace="$NAMESPACE" \
@@ -53,9 +66,15 @@ app_api_version=$(kubectl get "applications.app.k8s.io/$NAME" \
 kubectl config set-context $CLUSTER --user=cluster-admin --namespace=$NAMESPACE \
   && kubectl config use-context $CLUSTER
 
+gcloud auth activate-service-account --key-file /jx-development-81229c93c600.json
+
 # setup git
 git config --global --add user.name $GIT_USERNAME
 git config --global --add user.email $GIT_EMAIL
+
+# add the bitnami repo
+helm init
+helm repo add bitnami https://charts.bitnami.com/bitnami
 
 # Install Jenkins X into the current cluster
 jx install \
@@ -66,7 +85,9 @@ jx install \
 --git-api-token $GIT_API_TOKEN \
 --environment-git-owner $GIT_ENVIRONMENT_OWNER  \
 --provider=gke \
---docker-registry=gcr.io
+--docker-registry=gcr.io \
+--cloudbees-domain $CLOUDBEES_DOMAIN \
+--cloudbees-auth $CLOUDBEES_AUTH_USERNAME:$CLOUDBEES_AUTH_PASSWORD
 
 echo "CloudBees Jenkins X is installed and running"
 

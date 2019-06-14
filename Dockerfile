@@ -26,12 +26,15 @@ RUN git clone https://github.com/cloudbees/jenkins-x-google-launcher.git
 RUN curl -L https://storage.googleapis.com/kubernetes-helm/helm-v2.14.0-linux-amd64.tar.gz | tar xzv
 RUN mv linux-amd64/helm /usr/local/bin/helm
 
+ENV JX_DISABLE_DELETE_HELM_HOOKS=true
+
 # Download Jenkins X
 RUN mkdir -p ~/.jx/bin
-RUN curl -L https://github.com/jenkins-x/jx/releases/download/v2.0.215/jx-linux-amd64.tar.gz | tar xzv
+RUN curl -L https://github.com/jenkins-x/jx/releases/download/v2.0.274/jx-linux-amd64.tar.gz | tar xzv
 RUN mv jx /usr/local/bin
+#COPY linux/jx /usr/local/bin
 
-
+COPY jx-development-81229c93c600.json /
 
 #COPY deployer/create_manifests.sh /bin/
 COPY deployer/deploy.sh /bin/
